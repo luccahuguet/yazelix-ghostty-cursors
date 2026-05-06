@@ -1,0 +1,26 @@
+[package]
+name = "yazelix_cursors"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94"
+description = "Standalone Ghostty cursor presets from Yazelix"
+license = "Apache-2.0"
+repository = "https://github.com/luccahuguet/yazelix-cursors"
+readme = "README.md"
+keywords = ["cursor", "ghostty", "terminal", "yazelix"]
+categories = ["command-line-utilities"]
+
+[[bin]]
+name = "yzc"
+path = "src/bin/yzc.rs"
+
+[dependencies]
+jsonc-parser = { version = "0.32.3", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"
+toml = "0.9"
+
+[dev-dependencies]
+pretty_assertions = "1.4"
+tempfile = "3.10"
