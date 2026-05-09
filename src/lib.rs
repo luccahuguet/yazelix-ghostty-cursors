@@ -9,8 +9,8 @@ use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 use thiserror::Error;
 
-pub const DEFAULT_CURSOR_CONFIG_FILENAME: &str = "yazelix_cursors_default.toml";
-pub const STANDALONE_CURSOR_CONFIG_DIR_NAME: &str = "yazelix_cursors";
+pub const DEFAULT_CURSOR_CONFIG_FILENAME: &str = "yazelix_ghostty_cursors_default.toml";
+pub const STANDALONE_CURSOR_CONFIG_DIR_NAME: &str = "yazelix_ghostty_cursors";
 pub const STANDALONE_CURSOR_SETTINGS_FILENAME: &str = "settings.jsonc";
 pub const DEFAULT_GHOSTTY_TRAIL_DURATION: f64 = 1.0;
 pub const GHOSTTY_TRAIL_DURATION_MIN: f64 = 0.25;
@@ -556,9 +556,9 @@ impl CursorColor {
 
 pub fn render_cursor_settings_jsonc(registry: &CursorRegistry) -> String {
     let mut out = String::new();
-    out.push_str("// Yazelix Cursors settings\n");
+    out.push_str("// Yazelix Ghostty Cursors settings\n");
     out.push_str("// Edit this file through `yzx config ui`, `yzc init`, or your editor.\n");
-    out.push_str("// In Ghostty standalone setups, add: config-file = ~/.config/yazelix_cursors/ghostty.conf\n");
+    out.push_str("// In Ghostty standalone setups, add: config-file = ~/.config/yazelix_ghostty_cursors/ghostty.conf\n");
     out.push_str("{\n");
     out.push_str(&format!(
         "  \"schema_version\": {},\n",
@@ -1246,7 +1246,7 @@ pub fn write_ghostty_cursor_palette_shaders(
                     CursorError::io(
                         "read_curated_cursor_shader_variant",
                         "Could not read bundled Ghostty cursor shader variant",
-                        "Reinstall the yazelix_cursors package and retry.",
+                        "Reinstall the yazelix_ghostty_cursors package and retry.",
                         variant_path.to_string_lossy(),
                         source,
                     )
@@ -1282,7 +1282,7 @@ pub fn write_ghostty_cursor_effect_shaders(
             CursorErrorClass::Io,
             "missing_ghostty_effect_templates",
             "Could not find bundled Ghostty cursor effect templates.",
-            "Reinstall the yazelix_cursors package so share/yazelix/yazelix_cursors/shaders/upstream_effects exists.",
+            "Reinstall the yazelix_ghostty_cursors package so share/yazelix/yazelix_ghostty_cursors/shaders/upstream_effects exists.",
             json!({ "path": templates_dir.display().to_string() }),
         ));
     }
@@ -1315,7 +1315,7 @@ pub fn write_ghostty_cursor_effect_shaders(
             CursorError::io(
                 "read_ghostty_effect_template",
                 "Could not read bundled Ghostty cursor effect template",
-                "Reinstall the yazelix_cursors package and retry.",
+                "Reinstall the yazelix_ghostty_cursors package and retry.",
                 template_path.to_string_lossy(),
                 source,
             )
@@ -1841,7 +1841,7 @@ colors = ["#ff1600", "#2a3340"]"##,
     // Strength: defect=2 behavior=2 resilience=2 cost=1 uniqueness=2 total=9/10
     #[test]
     fn shipped_default_registry_parses_active_cursor_surface() {
-        let (_temp, path) = write_registry(include_str!("../yazelix_cursors_default.toml"));
+        let (_temp, path) = write_registry(include_str!("../yazelix_ghostty_cursors_default.toml"));
 
         let registry = load_registry(&path).unwrap();
 

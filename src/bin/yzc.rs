@@ -2,18 +2,18 @@ use serde_json::json;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
-use yazelix_cursors::{
+use yazelix_ghostty_cursors::{
     CursorDefinition, CursorError, CursorErrorClass, CursorFamily, CursorRegistry,
     ResolvedCursorRegistryState, SplitDivider, format_ghostty_trail_duration, parse_jsonc_value,
     render_cursor_settings_jsonc, write_ghostty_cursor_effect_shaders,
     write_ghostty_cursor_palette_shaders,
 };
 
-const DEFAULT_CURSOR_CONFIG: &str = include_str!("../../yazelix_cursors_default.toml");
-const CONFIG_DIR_NAME: &str = "yazelix_cursors";
+const DEFAULT_CURSOR_CONFIG: &str = include_str!("../../yazelix_ghostty_cursors_default.toml");
+const CONFIG_DIR_NAME: &str = "yazelix_ghostty_cursors";
 const SETTINGS_FILE_NAME: &str = "settings.jsonc";
 const GHOSTTY_INCLUDE_FILE_NAME: &str = "ghostty.conf";
-const SHARE_RELATIVE_PATH: &[&str] = &["share", "yazelix", "yazelix_cursors"];
+const SHARE_RELATIVE_PATH: &[&str] = &["share", "yazelix", "yazelix_ghostty_cursors"];
 const EFFECTS_REQUIRING_ALWAYS_ANIMATION: &[&str] =
     &["ripple", "sonic_boom", "rectangle_boom", "ripple_rectangle"];
 
@@ -171,7 +171,7 @@ fn run_init(cli: &Cli) -> Result<(), CursorError> {
     }
 
     let default_registry = CursorRegistry::parse_str(
-        Path::new("yazelix_cursors_default.toml"),
+        Path::new("yazelix_ghostty_cursors_default.toml"),
         DEFAULT_CURSOR_CONFIG,
     )?;
     let content = render_cursor_settings_jsonc(&default_registry);
@@ -317,7 +317,7 @@ fn run_generate_ghostty(cli: &Cli) -> Result<(), CursorError> {
             CursorErrorClass::Io,
             "missing_yzc_packaged_shaders",
             "Could not find packaged Yazelix cursor shaders.",
-            "Reinstall the yazelix_cursors package or pass --share-dir pointing at share/yazelix/yazelix_cursors.",
+            "Reinstall the yazelix_ghostty_cursors package or pass --share-dir pointing at share/yazelix/yazelix_ghostty_cursors.",
             json!({ "path": shader_src.display().to_string() }),
         ));
     }
@@ -363,7 +363,7 @@ fn run_generate_ghostty(cli: &Cli) -> Result<(), CursorError> {
 }
 
 fn print_help() {
-    println!("Yazelix Cursors");
+    println!("Yazelix Ghostty Cursors");
     println!();
     println!("Usage:");
     println!("  yzc [--config-dir <dir>] [--share-dir <dir>] init");
@@ -373,11 +373,11 @@ fn print_help() {
     println!("  yzc [--config-dir <dir>] [--share-dir <dir>] generate ghostty");
     println!();
     println!("Defaults:");
-    println!("  config: ~/.config/yazelix_cursors/settings.jsonc");
-    println!("  Ghostty include: ~/.config/yazelix_cursors/ghostty.conf");
+    println!("  config: ~/.config/yazelix_ghostty_cursors/settings.jsonc");
+    println!("  Ghostty include: ~/.config/yazelix_ghostty_cursors/ghostty.conf");
     println!();
     println!("Ghostty opt-in:");
-    println!("  config-file = ~/.config/yazelix_cursors/ghostty.conf");
+    println!("  config-file = ~/.config/yazelix_ghostty_cursors/ghostty.conf");
 }
 
 fn paths(config_dir: &Path) -> Paths {
@@ -431,7 +431,7 @@ fn resolve_share_dir(override_dir: Option<&Path>) -> Result<PathBuf, CursorError
         CursorError::io(
             "resolve_yzc_current_exe",
             "Could not resolve the yzc executable path",
-            "Run yzc from the yazelix_cursors package, or pass --share-dir explicitly.",
+            "Run yzc from the yazelix_ghostty_cursors package, or pass --share-dir explicitly.",
             "yzc",
             source,
         )
@@ -440,8 +440,8 @@ fn resolve_share_dir(override_dir: Option<&Path>) -> Result<PathBuf, CursorError
         return Err(CursorError::classified(
             CursorErrorClass::Runtime,
             "invalid_yzc_package_layout",
-            "Could not infer the yazelix_cursors package root from the yzc executable path.",
-            "Run yzc from the yazelix_cursors package, or pass --share-dir explicitly.",
+            "Could not infer the yazelix_ghostty_cursors package root from the yzc executable path.",
+            "Run yzc from the yazelix_ghostty_cursors package, or pass --share-dir explicitly.",
             json!({ "executable": exe.display().to_string() }),
         ));
     };
@@ -457,8 +457,8 @@ fn resolve_share_dir(override_dir: Option<&Path>) -> Result<PathBuf, CursorError
         Err(CursorError::classified(
             CursorErrorClass::Runtime,
             "missing_yzc_share_dir",
-            "Could not find the yazelix_cursors packaged share directory.",
-            "Run yzc from the yazelix_cursors package, or pass --share-dir pointing at share/yazelix/yazelix_cursors.",
+            "Could not find the yazelix_ghostty_cursors packaged share directory.",
+            "Run yzc from the yazelix_ghostty_cursors package, or pass --share-dir pointing at share/yazelix/yazelix_ghostty_cursors.",
             json!({
                 "executable": exe.display().to_string(),
                 "expected": share_dir.display().to_string(),
@@ -472,7 +472,7 @@ fn render_ghostty_include(
     resolved: &ResolvedCursorRegistryState,
 ) -> Result<String, CursorError> {
     let mut lines = vec![
-        "# Yazelix Cursors Ghostty include".to_string(),
+        "# Yazelix Ghostty Cursors Ghostty include".to_string(),
         "# Generated by yzc. Re-run `yzc generate ghostty` after editing settings.jsonc."
             .to_string(),
         format!(

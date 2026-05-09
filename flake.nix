@@ -36,7 +36,7 @@
             rustc = rustToolchain;
           };
           source = pkgs.lib.cleanSourceWith {
-            name = "yazelix-cursors-source";
+            name = "yazelix-ghostty-cursors-source";
             src = ./.;
             filter =
               path: _type:
@@ -50,7 +50,7 @@
           };
         in
         rustPlatform.buildRustPackage {
-          pname = "yazelix-cursors";
+          pname = "yazelix-ghostty-cursors";
           version = "0.1.0";
 
           src = source;
@@ -64,10 +64,10 @@
           postInstall = ''
             set -eu
 
-            share_dir="$out/share/yazelix/yazelix_cursors"
+            share_dir="$out/share/yazelix/yazelix_ghostty_cursors"
             legacy_share_dir="$out/share/yazelix/ghostty_cursor_shaders"
             examples_dir="$share_dir/examples"
-            work="$TMPDIR/yazelix_cursors_export"
+            work="$TMPDIR/yazelix_ghostty_cursors_export"
             config_dir="$work/config"
 
             mkdir -p "$share_dir" "$examples_dir" "$config_dir"
@@ -89,7 +89,7 @@ custom-shader = $share_dir/shaders/generated_effects/tail.glsl
 EOF
 
             cat > "$share_dir/README.md" <<EOF
-# Yazelix Cursors
+# Yazelix Ghostty Cursors
 
 This package exports complete Ghostty cursor shader files generated from Yazelix cursor presets
 
@@ -103,7 +103,7 @@ yzc generate ghostty
 Then include the generated file from Ghostty:
 
 \`\`\`conf
-config-file = ~/.config/yazelix_cursors/ghostty.conf
+config-file = ~/.config/yazelix_ghostty_cursors/ghostty.conf
 \`\`\`
 
 Use one cursor palette shader and one optional effect shader in your Ghostty config:
@@ -148,7 +148,7 @@ EOF
 
           meta = {
             description = "Standalone Ghostty cursor presets from Yazelix";
-            homepage = "https://github.com/luccahuguet/yazelix-cursors";
+            homepage = "https://github.com/luccahuguet/yazelix-ghostty-cursors";
             license = pkgs.lib.licenses.asl20;
             mainProgram = "yzc";
           };
@@ -164,7 +164,7 @@ EOF
         {
           default = yzc;
           yzc = yzc;
-          yazelix_cursors = yzc;
+          yazelix_ghostty_cursors = yzc;
         }
       );
 
@@ -177,7 +177,7 @@ EOF
           type = "app";
           program = "${self.packages.${system}.yzc}/bin/yzc";
         };
-        yazelix_cursors = {
+        yazelix_ghostty_cursors = {
           type = "app";
           program = "${self.packages.${system}.yzc}/bin/yzc";
         };

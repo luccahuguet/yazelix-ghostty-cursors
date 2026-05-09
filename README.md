@@ -1,12 +1,12 @@
-# Yazelix Cursors
+# Yazelix Ghostty Cursors
 
 Standalone Ghostty cursor presets from Yazelix
 
 The user-facing command is `yzc`
 
 ```bash
-nix run github:luccahuguet/yazelix-cursors#yzc -- --help
-nix profile install github:luccahuguet/yazelix-cursors#yazelix_cursors
+nix run github:luccahuguet/yazelix-ghostty-cursors#yzc -- --help
+nix profile install github:luccahuguet/yazelix-ghostty-cursors#yazelix_ghostty_cursors
 ```
 
 ## What It Contains
@@ -34,7 +34,7 @@ yzc generate ghostty
 Then include it from Ghostty:
 
 ```conf
-config-file = ~/.config/yazelix_cursors/ghostty.conf
+config-file = ~/.config/yazelix_ghostty_cursors/ghostty.conf
 ```
 
 Day-to-day commands:
@@ -42,7 +42,7 @@ Day-to-day commands:
 ```bash
 yzc list
 yzc inspect
-$EDITOR ~/.config/yazelix_cursors/settings.jsonc
+$EDITOR ~/.config/yazelix_ghostty_cursors/settings.jsonc
 yzc generate ghostty
 ```
 
@@ -51,19 +51,19 @@ yzc generate ghostty
 The standalone config lives at:
 
 ```text
-~/.config/yazelix_cursors/settings.jsonc
+~/.config/yazelix_ghostty_cursors/settings.jsonc
 ```
 
 The generated Ghostty include lives at:
 
 ```text
-~/.config/yazelix_cursors/ghostty.conf
+~/.config/yazelix_ghostty_cursors/ghostty.conf
 ```
 
 Ghostty shader files are generated into:
 
 ```text
-~/.config/yazelix_cursors/shaders
+~/.config/yazelix_ghostty_cursors/shaders
 ```
 
 ## Cursor Options
@@ -84,7 +84,7 @@ Effects are global per generated Ghostty include. Ghostty does not support per-c
 
 ## Boundary With Yazelix
 
-`yazelix_cursors` owns reusable cursor registry validation, Ghostty shader generation, packaged assets, and the standalone `yzc` command
+`yazelix_ghostty_cursors` owns reusable cursor registry validation, Ghostty shader generation, packaged assets, and the standalone `yzc` command
 
 Yazelix consumes this crate for integrated cursor config, the config UI cursor tab, terminal materialization, and `yzx cursors`
 
@@ -97,9 +97,9 @@ The crate must not depend on:
 
 ## Surfaces
 
-- Product/repository: `yazelix-cursors`
+- Product/repository: `yazelix-ghostty-cursors`
 - Command: `yzc`
-- Rust crate: `yazelix_cursors`
+- Rust crate: `yazelix_ghostty_cursors`
 - Integrated Yazelix command: `yzx cursors`
 
 ## Verification
@@ -111,6 +111,6 @@ cargo fmt --check
 cargo check --all-targets
 cargo test
 cargo run --bin yzc -- --help
-nix build .#yazelix_cursors
+nix build .#yazelix_ghostty_cursors
 nix run .#yzc -- --help
 ```

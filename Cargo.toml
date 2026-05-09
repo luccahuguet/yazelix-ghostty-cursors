@@ -1,11 +1,11 @@
 [package]
-name = "yazelix_cursors"
+name = "yazelix_ghostty_cursors"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.94"
 description = "Standalone Ghostty cursor presets from Yazelix"
 license = "Apache-2.0"
-repository = "https://github.com/luccahuguet/yazelix-cursors"
+repository = "https://github.com/luccahuguet/yazelix-ghostty-cursors"
 readme = "README.md"
 keywords = ["cursor", "ghostty", "terminal", "yazelix"]
 categories = ["command-line-utilities"]
