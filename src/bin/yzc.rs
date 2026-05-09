@@ -29,8 +29,15 @@ enum Command {
     Init,
     List,
     Inspect,
+    Current { format: CurrentFormat },
     GenerateGhostty,
     Help,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum CurrentFormat {
+    Env,
+    Json,
 }
 
 #[derive(Debug)]
@@ -58,6 +65,7 @@ fn run() -> Result<(), CursorError> {
         Command::Init => run_init(&cli),
         Command::List => run_list(&cli),
         Command::Inspect => run_inspect(&cli),
+        Command::Current { format } => run_current(&cli, format),
         Command::GenerateGhostty => run_generate_ghostty(&cli),
         Command::Help => {
             print_help();
@@ -108,6 +116,12 @@ fn parse_cli(args: impl IntoIterator<Item = String>) -> Result<Cli, CursorError>
         [single] if single == "init" => Command::Init,
         [single] if single == "list" => Command::List,
         [single] if single == "inspect" => Command::Inspect,
+        [single] if single == "current" => Command::Current {
+            format: CurrentFormat::Env,
+        },
+        [current, flag, format] if current == "current" && flag == "--format" => Command::Current {
+            format: parse_current_format(format)?,
+        },
         [generate, target] if generate == "generate" && target == "ghostty" => {
             Command::GenerateGhostty
         }
@@ -124,6 +138,16 @@ fn parse_cli(args: impl IntoIterator<Item = String>) -> Result<Cli, CursorError>
         share_dir,
         command,
     })
+}
+
+fn parse_current_format(raw: &str) -> Result<CurrentFormat, CursorError> {
+    match raw {
+        "env" => Ok(CurrentFormat::Env),
+        "json" => Ok(CurrentFormat::Json),
+        _ => Err(usage_error(format!(
+            "Unknown yzc current format: {raw}. Use env or json."
+        ))),
+    }
 }
 
 fn run_init(cli: &Cli) -> Result<(), CursorError> {
@@ -221,6 +245,69 @@ fn run_inspect(cli: &Cli) -> Result<(), CursorError> {
     Ok(())
 }
 
+fn run_current(cli: &Cli, format: CurrentFormat) -> Result<(), CursorError> {
+    let paths = paths(&cli.config_dir);
+    if !paths.config_path.exists() {
+        print_current_cursor(None, format);
+        return Ok(());
+    }
+
+    let registry = load_standalone_registry(&paths.config_path)?;
+    let resolved = registry.resolve();
+    print_current_cursor(resolved.selected_cursor.as_ref(), format);
+    Ok(())
+}
+
+fn print_current_cursor(cursor: Option<&CursorDefinition>, format: CurrentFormat) {
+    match format {
+        CurrentFormat::Env => {
+            if let Some(cursor) = cursor {
+                println!("YAZELIX_CURSOR_NAME={}", cursor.name);
+                println!("YAZELIX_CURSOR_COLOR={}", cursor.cursor_color.hex);
+                println!("YAZELIX_CURSOR_FAMILY={}", cursor.family.as_str());
+                if cursor.family == CursorFamily::Split {
+                    if let Some(divider) = cursor.divider {
+                        println!("YAZELIX_CURSOR_DIVIDER={}", divider.as_str());
+                    }
+                    if let Some(primary) = cursor.colors.first() {
+                        println!("YAZELIX_CURSOR_PRIMARY_COLOR={}", primary.hex);
+                    }
+                    if let Some(secondary) = cursor.colors.get(1) {
+                        println!("YAZELIX_CURSOR_SECONDARY_COLOR={}", secondary.hex);
+                    }
+                }
+            }
+        }
+        CurrentFormat::Json => {
+            if let Some(cursor) = cursor {
+                println!("{}", current_cursor_json(cursor));
+            } else {
+                println!("{{}}");
+            }
+        }
+    }
+}
+
+fn current_cursor_json(cursor: &CursorDefinition) -> serde_json::Value {
+    let mut value = json!({
+        "name": cursor.name,
+        "color": cursor.cursor_color.hex,
+        "family": cursor.family.as_str(),
+    });
+    if cursor.family == CursorFamily::Split {
+        if let Some(divider) = cursor.divider {
+            value["divider"] = json!(divider.as_str());
+        }
+        if let Some(primary) = cursor.colors.first() {
+            value["primary_color"] = json!(primary.hex);
+        }
+        if let Some(secondary) = cursor.colors.get(1) {
+            value["secondary_color"] = json!(secondary.hex);
+        }
+    }
+    value
+}
+
 fn run_generate_ghostty(cli: &Cli) -> Result<(), CursorError> {
     let paths = paths(&cli.config_dir);
     let share_dir = resolve_share_dir(cli.share_dir.as_deref())?;
@@ -282,6 +369,7 @@ fn print_help() {
     println!("  yzc [--config-dir <dir>] [--share-dir <dir>] init");
     println!("  yzc [--config-dir <dir>] [--share-dir <dir>] list");
     println!("  yzc [--config-dir <dir>] [--share-dir <dir>] inspect");
+    println!("  yzc [--config-dir <dir>] [--share-dir <dir>] current [--format env|json]");
     println!("  yzc [--config-dir <dir>] [--share-dir <dir>] generate ghostty");
     println!();
     println!("Defaults:");
